@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "commanded",
+  "version": "${version}",
+
+  "name": "Commanded",
+  "description": "Various utilities for commands, right click detection and CustomModelData blocking.",
+  "authors": [
+    "Jupiterio"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/commanded/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.jupiterio.commanded.CommandedMod"
+    ]
+  },
+  "mixins": [
+    "commanded.mixins.json",
+    "compat.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.8.8",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
