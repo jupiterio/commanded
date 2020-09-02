@@ -51,7 +51,7 @@ public class MixinServerPlayerInteractionManager {
                 }
             }
 
-            if (stack.getItem() != Items.PAPER) {
+            if (stack.getItem() != Items.PAPER && stack.getItem() != Items.QUARTZ) {
                 cir.setReturnValue(ActionResult.PASS);
             }
         }
@@ -77,7 +77,7 @@ public class MixinServerPlayerInteractionManager {
         CompoundTag compoundTag = stack.getTag();
         if (compoundTag != null && compoundTag.contains("CustomModelData", 99)) {
 
-            if (stack.getItem() != Items.PAPER) {
+            if (stack.getItem() != Items.PAPER && stack.getItem() != Items.QUARTZ) {
                 cir.setReturnValue(ActionResult.PASS);
             }
         }
