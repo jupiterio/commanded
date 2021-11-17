@@ -2,45 +2,49 @@ package io.github.jupiterio.commanded.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.command.argument.EntityArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Hand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
+import io.github.jupiterio.volcanolib.text.TextBuilder;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.minecraft.server.command.CommandManager.argument;
 
 public class AggroCommand {
-    private static final SimpleCommandExceptionType NOT_LIVING_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("You can only use this command with mobs and players"));
+    private static final SimpleCommandExceptionType NOT_MOB_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("You can only use this command with mobs"));
+    private static final SimpleCommandExceptionType CANT_AGGRO_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("You can only aggro other living entities"));
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralCommandNode<ServerCommandSource> root = dispatcher.register(
-            literal("swing").requires(source -> source.hasPermissionLevel(2))
-                .then(literal("mainhand")
-                    .executes(context -> executeSwing(context, Hand.MAIN_HAND)))
-                .then(literal("offhand")
-                    .executes(context -> executeSwing(context, Hand.OFF_HAND)))
+            literal("aggro").requires(source -> source.hasPermissionLevel(2))
+                .then(argument("source", EntityArgumentType.entity())
+                    .then(argument("target", EntityArgumentType.entity())
+                        .executes(context -> executeAggro(context, EntityArgumentType.getEntity(context, "source"), EntityArgumentType.getEntity(context, "target"))))
+                    .executes(context -> executeAggro(context, EntityArgumentType.getEntity(context, "source"), null)))
         );
     }
 
-    public static int executeSwing(CommandContext<ServerCommandSource> context, Hand hand) throws CommandSyntaxException {
+    public static int executeAggro(CommandContext<ServerCommandSource> context, Entity sourceEntity, Entity targetEntity) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
-        Entity entity = source.getEntityOrThrow();
 
-        if (!(entity instanceof LivingEntity)) throw NOT_LIVING_EXCEPTION.create();
+        if (!(sourceEntity instanceof MobEntity)) throw NOT_MOB_EXCEPTION.create();
+        if (targetEntity != null && !(targetEntity instanceof LivingEntity)) throw CANT_AGGRO_EXCEPTION.create();
 
-        LivingEntity lentity = (LivingEntity)entity;
+        MobEntity msEntity = (MobEntity)sourceEntity;
+        LivingEntity ltEntity = (LivingEntity)targetEntity;
 
-        lentity.swingHand(hand, true);
+        msEntity.setTarget(ltEntity);
 
-        if (hand == Hand.MAIN_HAND) {
-            source.sendFeedback(new LiteralText("Swung main hand"), false);
+        if (targetEntity == null) {
+            source.sendFeedback(TextBuilder.builder().text("Removed aggro from ").entity(sourceEntity).build(), false);
         } else {
-            source.sendFeedback(new LiteralText("Swung off hand"), false);
+            source.sendFeedback(TextBuilder.builder().text("Made ").entity(sourceEntity).text(" aggro ").entity(targetEntity).build(), false);
         }
 
         return 1;

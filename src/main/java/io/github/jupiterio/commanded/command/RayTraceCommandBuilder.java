@@ -1,6 +1,6 @@
 package io.github.jupiterio.commanded.command;
 
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 
 public class RayTraceCommandBuilder {
     
@@ -54,32 +54,32 @@ public class RayTraceCommandBuilder {
     }
     
     enum RayTraceBlocks {
-        ALL(RayTraceContext.ShapeType.OUTLINE),
-        COLLIDABLE(RayTraceContext.ShapeType.COLLIDER);
+        ALL(RaycastContext.ShapeType.OUTLINE),
+        COLLIDABLE(RaycastContext.ShapeType.COLLIDER);
         
-        private final RayTraceContext.ShapeType shape;
+        private final RaycastContext.ShapeType shape;
 
-        private RayTraceBlocks(RayTraceContext.ShapeType shape) {
+        private RayTraceBlocks(RaycastContext.ShapeType shape) {
             this.shape = shape;
         }
         
-        public RayTraceContext.ShapeType get() {
+        public RaycastContext.ShapeType get() {
             return this.shape;
         }
     }
     
     enum RayTraceFluids {
-        NONE(RayTraceContext.FluidHandling.NONE),
-        SOURCE(RayTraceContext.FluidHandling.SOURCE_ONLY),
-        ALL(RayTraceContext.FluidHandling.ANY);
+        NONE(RaycastContext.FluidHandling.NONE),
+        SOURCE(RaycastContext.FluidHandling.SOURCE_ONLY),
+        ALL(RaycastContext.FluidHandling.ANY);
         
-        private final RayTraceContext.FluidHandling fluids;
+        private final RaycastContext.FluidHandling fluids;
 
-        private RayTraceFluids(RayTraceContext.FluidHandling fluids) {
+        private RayTraceFluids(RaycastContext.FluidHandling fluids) {
             this.fluids = fluids;
         }
         
-        public RayTraceContext.FluidHandling get() {
+        public RaycastContext.FluidHandling get() {
             return this.fluids;
         }
     }

@@ -19,10 +19,10 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtString;
 import java.util.Iterator;
 
 import static net.minecraft.server.command.CommandManager.literal;
@@ -55,11 +55,11 @@ public class StringCommand {
                             NbtPathArgumentType.NbtPath targetPath = NbtPathArgumentType.getNbtPath(context, "targetPath");
 
                             NbtPathArgumentType.NbtPath sourcePath = NbtPathArgumentType.getNbtPath(context, "sourcePath");
-                            CompoundTag sourceTag = sourceObject.getObject(context).getTag();
-                            Tag tag = sourcePath.get(sourceTag).iterator().next();
+                            NbtCompound sourceTag = sourceObject.getObject(context).getNbt();
+                            NbtElement tag = sourcePath.get(sourceTag).iterator().next();
 
                             String appendage;
-                            if (tag instanceof AbstractNumberTag || tag instanceof StringTag) {
+                            if (tag instanceof AbstractNbtNumber || tag instanceof NbtString) {
                                 appendage = tag.asString();
                             } else {
                                 throw NOT_STRINGABLE_EXCEPTION.create();
@@ -100,14 +100,14 @@ public class StringCommand {
     public static int executeAppend(CommandContext<ServerCommandSource> context, DataCommandObject targetObj, NbtPathArgumentType.NbtPath targetPath, String appendage) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
 
-        CompoundTag targetTag = targetObj.getTag();
-        Tag tag = (Tag) Iterables.getLast(targetPath.getOrInit(targetTag, ()->StringTag.of("")));
+        NbtCompound targetTag = targetObj.getNbt();
+        NbtElement tag = (NbtElement) Iterables.getLast(targetPath.getOrInit(targetTag, ()->NbtString.of("")));
 
-        if (tag instanceof StringTag) {
+        if (tag instanceof NbtString) {
             source.sendFeedback(new LiteralText(tag.asString() + appendage), false);
-            targetPath.put(targetTag, ()->StringTag.of(tag.asString() + appendage));
+            targetPath.put(targetTag, ()->NbtString.of(tag.asString() + appendage));
 
-            targetObj.setTag(targetTag);
+            targetObj.setNbt(targetTag);
         } else {
             throw NOT_STRING_EXCEPTION.create();
         }
@@ -118,8 +118,8 @@ public class StringCommand {
     public static int executeSlice(CommandContext<ServerCommandSource> context, DataCommandObject targetObj, NbtPathArgumentType.NbtPath targetPath, int from, int to) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
 
-        CompoundTag targetTag = targetObj.getTag();
-        Tag tag = (Tag) Iterables.getLast(targetPath.getOrInit(targetTag, ()->StringTag.of("")));
+        NbtCompound targetTag = targetObj.getNbt();
+        NbtElement tag = (NbtElement) Iterables.getLast(targetPath.getOrInit(targetTag, ()->NbtString.of("")));
 
         int length = tag.asString().length();
         if (from > 0) {
@@ -145,11 +145,11 @@ public class StringCommand {
         int rfrom = from;
         int rto = to;
 
-        if (tag instanceof StringTag) {
+        if (tag instanceof NbtString) {
             source.sendFeedback(new LiteralText(tag.asString().substring(rfrom, rto)), false);
-            targetPath.put(targetTag, ()->StringTag.of(tag.asString().substring(rfrom, rto)));
+            targetPath.put(targetTag, ()->NbtString.of(tag.asString().substring(rfrom, rto)));
 
-            targetObj.setTag(targetTag);
+            targetObj.setNbt(targetTag);
         } else {
             throw NOT_STRING_EXCEPTION.create();
         }

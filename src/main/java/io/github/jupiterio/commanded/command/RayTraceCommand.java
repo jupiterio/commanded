@@ -18,7 +18,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.text.LiteralText;
 import java.util.HashMap;
 import java.util.Map;
@@ -160,11 +160,11 @@ public class RayTraceCommand {
         return source;
     }
     
-    private static HitResult rayTrace(Entity entity, double maxRange, RayTraceContext.ShapeType shape, RayTraceContext.FluidHandling filter) {
+    private static HitResult rayTrace(Entity entity, double maxRange, RaycastContext.ShapeType shape, RaycastContext.FluidHandling filter) {
         Vec3d vec3d = entity.getCameraPosVec(1.0F);
         Vec3d vec3d2 = entity.getRotationVec(1.0F);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * maxRange, vec3d2.y * maxRange, vec3d2.z * maxRange);
         
-        return entity.world.rayTrace(new RayTraceContext(vec3d, vec3d3, shape, filter, entity));
+        return entity.world.raycast(new RaycastContext(vec3d, vec3d3, shape, filter, entity));
     }
 }

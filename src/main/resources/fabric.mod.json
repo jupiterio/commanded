@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Commanded",
-  "description": "Various utilities for commands, right click detection and CustomModelData blocking.",
+  "description": "Various utilities for commands and right click detection with any item",
   "authors": [
     "Jupiterio"
   ],
@@ -23,14 +23,13 @@
     ]
   },
   "mixins": [
-    "commanded.mixins.json",
-    "compat.mixins.json"
+    "commanded.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.8.8",
     "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.17.x"
   },
   "suggests": {
     "flamingo": "*"

@@ -19,10 +19,9 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtString;
 import java.util.Iterator;
 
 import static net.minecraft.server.command.CommandManager.literal;
@@ -46,11 +45,11 @@ public class EvalCommand {
                     CommandManager manager = source.getMinecraftServer().getCommandManager();
 
                     NbtPathArgumentType.NbtPath targetPath = NbtPathArgumentType.getNbtPath(context, "targetPath");
-                    CompoundTag targetTag = targetObject.getObject(context).getTag();
-                    Tag tag = targetPath.get(targetTag).iterator().next();
+                    NbtCompound targetTag = targetObject.getObject(context).getNbt();
+                    NbtElement tag = targetPath.get(targetTag).iterator().next();
 
                     String command;
-                    if (tag instanceof StringTag) {
+                    if (tag instanceof NbtString) {
                         command = tag.asString();
                     } else {
                         throw NOT_LIVING_EXCEPTION.create();
